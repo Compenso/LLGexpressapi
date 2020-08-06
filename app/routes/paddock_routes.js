@@ -57,9 +57,11 @@ router.get('/paddocks/:id', requireToken, (req, res, next) => {
 
 // CREATE
 // POST /paddocks
-router.post('/paddocks', requireToken, (req, res, next) => {
+// new paddocks already have an owner, so they don't need a token.  A person must be signed in in order to create a new Paddock...so, only the show will need some sort of refinement...
+router.post('/paddocks', (req, res, next) => {
   // set owner of new paddock to be current user
-  req.body.paddock.owner = req.user.id
+  // req.body.paddock.owner = req.user._id
+  // console.log(req.user._id)
 
   Paddock.create(req.body.paddock)
     // respond to succesful `create` with status 201 and JSON of new "paddock"
