@@ -1,12 +1,10 @@
 // Express docs: http://expressjs.com/en/api.html
 const express = require('express')
-const mongoose = require('mongoose')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
 
 // pull in Mongoose model for systems
-const systemSchema = require('../models/system')
-const System = mongoose.model('System', systemSchema)
+const System = require('../models/system')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -34,8 +32,9 @@ const router = express.Router()
 router.get('/systems', requireToken, (req, res, next) => {
   // Adding an owner's value to the system.find to show only those
   // systems owned by the person signed in.
-  const whoseSystem = { owner: req.user.id }
-  System.find(whoseSystem)
+  const whosePaddock = { owner: req.user.id }
+  const whichPaddock = req.body.system.id
+  System.find(whosePaddock, whichPaddock)
     .then(systems => {
       // `systems` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
