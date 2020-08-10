@@ -1,12 +1,10 @@
 const mongoose = require('mongoose')
-const systemSchema = require('./system')
 
-const paddockSchema = new mongoose.Schema({
+const systemSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
   },
-  systems: [systemSchema],
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -16,4 +14,4 @@ const paddockSchema = new mongoose.Schema({
   timestamps: true
 })
 
-module.exports = mongoose.model('Paddock', paddockSchema)
+module.exports = systemSchema
