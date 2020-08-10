@@ -30,7 +30,10 @@ const router = express.Router()
 // INDEX
 // GET /paddocks
 router.get('/paddocks', requireToken, (req, res, next) => {
-  Paddock.find()
+  // Adding an owner's value to the paddock.find to show only those
+  // paddocks owned by the person signed in.
+  const whosePaddock = { owner: req.user.id }
+  Paddock.find(whosePaddock)
     .then(paddocks => {
       // `paddocks` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
