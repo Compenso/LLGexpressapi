@@ -5,9 +5,9 @@ const passport = require('passport')
 const mongoose = require('mongoose')
 
 // pull in the paddock that the system files will be added to.
-const Paddock = require('../model/paddock')
+const Paddock = require('../models/paddock')
 // pull in Mongoose model for systems
-const systemSchema = require('../models/systemSchema')
+const systemSchema = require('../models/system')
 // turn it into a mongoose model.
 const System = mongoose.model('System', systemSchema)
 
@@ -19,11 +19,11 @@ const customErrors = require('../../lib/custom_errors')
 const handle404 = customErrors.handle404
 // we'll use this function to send 401 when a user tries to modify a resource
 // that's owned by someone else
-const requireOwnership = customErrors.requireOwnership
+// const requireOwnership = customErrors.requireOwnership
 
 // this is middleware that will remove blank fields from `req.body`, e.g.
 // { system: { title: '', text: 'foo' } } -> { system: { text: 'foo' } }
-const removeBlanks = require('../../lib/remove_blank_fields')
+// const removeBlanks = require('../../lib/remove_blank_fields')
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
 // it will also set `req.user`
@@ -67,13 +67,19 @@ const router = express.Router()
 // CREATE
 // POST /systems
 // new systems already have an owner, so they don't need a token.  A person must be signed in in order to create a new System...so, only the show will need some sort of refinement...
-router.post('/systems', (req, res, next) => {
+router.post('/paddocks/:id', (req, res, next) => {
+  console.log(req.params.id)
+  console.log(req.body.paddock.systems)
   let systemData
   const paddockId = req.params.id
-  System.create(req.body.system)
-    .then(system => {
-      res.status(201).json({ system: system.toObject() })
+  console.log('Hello from the backend')
+  System.create(req.body.paddock.systems)
+    .then(handle404)
+    .then(res => {
+      systemData = res
+      return res
     })
+    .then(() => console.log(systemData, 'dat data'))
     .catch(next)
 
   Paddock.findById(paddockId)
@@ -82,6 +88,10 @@ router.post('/systems', (req, res, next) => {
       paddock.systems.push(systemData)
       return paddock.save()
     })
+    .then(paddock => {
+      res.status(201).json({ paddock: paddock.toObject() })
+    })
+    .catch(next)
 })
 
 // UPDATE

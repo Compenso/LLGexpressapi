@@ -4,7 +4,9 @@ const express = require('express')
 const passport = require('passport')
 
 // pull in Mongoose model for systems
-const System = require('../models/system')
+const mongoose = require('mongoose')
+const systemSchema = require('../models/system')
+const System = mongoose.model('System', systemSchema)
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
