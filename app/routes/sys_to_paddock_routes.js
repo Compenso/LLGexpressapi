@@ -2,14 +2,14 @@
 const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 
 // pull in the paddock that the system files will be added to.
 const Paddock = require('../models/paddock')
 // pull in Mongoose model for systems
-const systemSchema = require('../models/system')
+// const systemSchema = require('../models/system')
 // turn it into a mongoose model.
-const System = mongoose.model('System', systemSchema)
+// const System = mongoose.model('System', systemSchema)
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -33,24 +33,26 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // INDEX
-// GET /systems
-// router.get('/systems', requireToken, (req, res, next) => {
-//   // Adding an owner's value to the system.find to show only those
-//   // systems owned by the person signed in.
-//   const whosePaddock = { owner: req.user.id }
-//   const whichPaddock = req.body.system.id
-//   System.find(whosePaddock, whichPaddock)
-//     .then(systems => {
-//       // `systems` will be an array of Mongoose documents
-//       // we want to convert each one to a POJO, so we use `.map` to
-//       // apply `.toObject` to each one
-//       return systems.map(system => system.toObject())
-//     })
-//     // respond with status 200 and JSON of the systems
-//     .then(systems => res.status(200).json({ systems: systems }))
-//     // if an error occurs, pass it to the handler
-//     .catch(next)
-// })
+// GET /paddocks/:id/systems
+router.get('/paddocks/:padId/systems/:sysId', (req, res, next) => {
+  // Adding an owner's value to the system.find to show only those
+  // systems owned by the person signed in.
+  // const whosePaddock = { owner: req.user.id }
+  // const whichPaddock = req.body.paddock.id
+  console.log('api 42 GET')
+  const padId = req.params.padId
+  Paddock.findById(padId)
+    .then(paddock => {
+      // `systems` will be an array of Mongoose documents
+      // we want to convert each one to a POJO, so we use `.map` to
+      // apply `.toObject` to each one
+      return paddock.systems.map(system => system.toObject())
+    })
+    // respond with status 200 and JSON of the systems
+    .then(systems => res.status(200).json({ systems: systems }))
+    // if an error occurs, pass it to the handler
+    .catch(next)
+})
 
 // SHOW
 // GET /systems/5a7db6c74d55bc51bdf39793
@@ -70,21 +72,18 @@ const router = express.Router()
 router.post('/paddocks/:id', (req, res, next) => {
   console.log(req.params.id)
   console.log(req.body.paddock.systems)
-  let systemData
+  // let systemData
   const paddockId = req.params.id
   console.log('Hello from the backend')
-  System.create(req.body.paddock.systems)
-    .then(handle404)
-    .then(res => {
-      systemData = res
-      return res
-    })
-    .then(() => console.log(systemData, 'dat data'))
-    .catch(next)
 
   Paddock.findById(paddockId)
     .then(handle404)
+    .then((paddock) => {
+      console.log('line 87 paddock')
+      return paddock
+    })
     .then(paddock => {
+      const systemData = req.body.paddock.systems
       paddock.systems.push(systemData)
       return paddock.save()
     })

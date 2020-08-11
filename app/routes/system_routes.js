@@ -35,8 +35,8 @@ router.get('/systems', requireToken, (req, res, next) => {
   // Adding an owner's value to the system.find to show only those
   // systems owned by the person signed in.
   const whosePaddock = { owner: req.user.id }
-  const whichPaddock = req.body.system.id
-  System.find(whosePaddock, whichPaddock)
+  // const whichPaddock = req.body.system.id
+  System.find(whosePaddock)
     .then(systems => {
       // `systems` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to

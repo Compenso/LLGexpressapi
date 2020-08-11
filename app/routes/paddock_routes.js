@@ -32,6 +32,7 @@ const router = express.Router()
 router.get('/paddocks', requireToken, (req, res, next) => {
   // Adding an owner's value to the paddock.find to show only those
   // paddocks owned by the person signed in.
+  console.log(req)
   const whosePaddock = { owner: req.user.id }
   Paddock.find(whosePaddock)
     .then(paddocks => {
