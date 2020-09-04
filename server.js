@@ -7,7 +7,7 @@ const cors = require('cors')
 const userRoutes = require('./app/routes/user_routes')
 const paddockRoutes = require('./app/routes/paddock_routes')
 const stepsRoutes = require('./app/routes/steps_routes')
-const stepsToPaddockRoutes = require('./app/routes/sys_to_paddock_routes.js')
+const stepsToPaddockRoutes = require('./app/routes/steps_to_paddock_routes.js')
 
 // require middleware
 const errorHandler = require('./lib/error_handler')

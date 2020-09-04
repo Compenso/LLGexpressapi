@@ -5,7 +5,7 @@ const passport = require('passport')
 
 // pull in Mongoose model for steps
 const mongoose = require('mongoose')
-const stepsSchema = require('../models/step')
+const stepsSchema = require('../models/steps')
 const Steps = mongoose.model('Steps', stepsSchema)
 
 // this is a collection of methods that help us detect situations when we need
