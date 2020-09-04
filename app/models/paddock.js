@@ -6,7 +6,7 @@ const paddockSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  systems: [stepsSchema],
+  steps: [stepsSchema],
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

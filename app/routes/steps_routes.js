@@ -62,17 +62,17 @@ router.get('/steps/:id', requireToken, (req, res, next) => {
 })
 
 // CREATE
-// POST /systems
-// new systems already have an owner, so they don't need a token.  A person must be signed in in order to create a new Steps...so, only the show will need some sort of refinement...
-router.post('/systems', (req, res, next) => {
-  // set owner of new system to be current user
-  // req.body.system.owner = req.user._id
+// POST /steps
+// new steps already have an owner, so they don't need a token.  A person must be signed in in order to create a new Steps...so, only the show will need some sort of refinement...
+router.post('/steps', (req, res, next) => {
+  // set owner of new step to be current user
+  // req.body.step.owner = req.user._id
   // console.log(req.user._id)
 
-  Steps.create(req.body.system)
-    // respond to succesful `create` with status 201 and JSON of new "system"
-    .then(system => {
-      res.status(201).json({ system: system.toObject() })
+  Steps.create(req.body.step)
+    // respond to succesful `create` with status 201 and JSON of new "step"
+    .then(step => {
+      res.status(201).json({ step: step.toObject() })
     })
     // if an error occurs, pass it off to our error handler
     // the error handler needs the error message and the `res` object so that it
@@ -81,11 +81,11 @@ router.post('/systems', (req, res, next) => {
 })
 
 // UPDATE
-// PATCH /systems/5a7db6c74d55bc51bdf39793
-router.patch('/systems/:id', requireToken, removeBlanks, (req, res, next) => {
+// PATCH /steps/5a7db6c74d55bc51bdf39793
+router.patch('/steps/:id', requireToken, removeBlanks, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair
-  delete req.body.system.owner
+  delete req.body.step.owner
 
   Steps.findById(req.params.id)
     .then(handle404)
