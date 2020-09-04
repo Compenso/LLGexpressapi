@@ -6,8 +6,8 @@ const cors = require('cors')
 // require route files
 const userRoutes = require('./app/routes/user_routes')
 const paddockRoutes = require('./app/routes/paddock_routes')
-const systemRoutes = require('./app/routes/system_routes')
-const sysToPaddockRoutes = require('./app/routes/sys_to_paddock_routes.js')
+const stepsRoutes = require('./app/routes/steps_routes')
+const stepsToPaddockRoutes = require('./app/routes/sys_to_paddock_routes.js')
 
 // require middleware
 const errorHandler = require('./lib/error_handler')
@@ -65,8 +65,8 @@ app.use(requestLogger)
 // register route files
 app.use(userRoutes)
 app.use(paddockRoutes)
-app.use(sysToPaddockRoutes)
-app.use(systemRoutes)
+app.use(stepsToPaddockRoutes)
+app.use(stepsRoutes)
 
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be

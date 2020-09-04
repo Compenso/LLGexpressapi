@@ -3,10 +3,10 @@ const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
 
-// pull in Mongoose model for systems
+// pull in Mongoose model for steps
 const mongoose = require('mongoose')
-const systemSchema = require('../models/system')
-const System = mongoose.model('System', systemSchema)
+const stepsSchema = require('../models/step')
+const Steps = mongoose.model('Steps', stepsSchema)
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -19,7 +19,7 @@ const handle404 = customErrors.handle404
 const requireOwnership = customErrors.requireOwnership
 
 // this is middleware that will remove blank fields from `req.body`, e.g.
-// { system: { title: '', text: 'foo' } } -> { system: { text: 'foo' } }
+// { step: { title: '', text: 'foo' } } -> { step: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
@@ -30,46 +30,46 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // INDEX
-// GET /systems
-router.get('/systems', requireToken, (req, res, next) => {
-  // Adding an owner's value to the system.find to show only those
-  // systems owned by the person signed in.
+// GET /steps
+router.get('/steps', requireToken, (req, res, next) => {
+  // Adding an owner's value to the step.find to show only those
+  // steps owned by the person signed in.
   const whosePaddock = { owner: req.user.id }
-  // const whichPaddock = req.body.system.id
-  System.find(whosePaddock)
-    .then(systems => {
-      // `systems` will be an array of Mongoose documents
+  // const whichPaddock = req.body.step.id
+  Steps.find(whosePaddock)
+    .then(steps => {
+      // `steps` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
       // apply `.toObject` to each one
-      return systems.map(system => system.toObject())
+      return steps.map(step => step.toObject())
     })
-    // respond with status 200 and JSON of the systems
-    .then(systems => res.status(200).json({ systems: systems }))
+    // respond with status 200 and JSON of the steps
+    .then(steps => res.status(200).json({ steps: steps }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
 
 // SHOW
-// GET /systems/5a7db6c74d55bc51bdf39793
-router.get('/systems/:id', requireToken, (req, res, next) => {
+// GET /steps/5a7db6c74d55bc51bdf39793
+router.get('/steps/:id', requireToken, (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
-  System.findById(req.params.id)
+  Steps.findById(req.params.id)
     .then(handle404)
-    // if `findById` is succesful, respond with 200 and "system" JSON
-    .then(system => res.status(200).json({ system: system.toObject() }))
+    // if `findById` is succesful, respond with 200 and "step" JSON
+    .then(step => res.status(200).json({ step: step.toObject() }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
 
 // CREATE
 // POST /systems
-// new systems already have an owner, so they don't need a token.  A person must be signed in in order to create a new System...so, only the show will need some sort of refinement...
+// new systems already have an owner, so they don't need a token.  A person must be signed in in order to create a new Steps...so, only the show will need some sort of refinement...
 router.post('/systems', (req, res, next) => {
   // set owner of new system to be current user
   // req.body.system.owner = req.user._id
   // console.log(req.user._id)
 
-  System.create(req.body.system)
+  Steps.create(req.body.system)
     // respond to succesful `create` with status 201 and JSON of new "system"
     .then(system => {
       res.status(201).json({ system: system.toObject() })
@@ -87,15 +87,15 @@ router.patch('/systems/:id', requireToken, removeBlanks, (req, res, next) => {
   // owner, prevent that by deleting that key/value pair
   delete req.body.system.owner
 
-  System.findById(req.params.id)
+  Steps.findById(req.params.id)
     .then(handle404)
-    .then(system => {
+    .then(step => {
       // pass the `req` object and the Mongoose record to `requireOwnership`
       // it will throw an error if the current user isn't the owner
-      requireOwnership(req, system)
+      requireOwnership(req, step)
 
       // pass the result of Mongoose's `.update` to the next `.then`
-      return system.updateOne(req.body.system)
+      return step.updateOne(req.body.step)
     })
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
@@ -104,15 +104,15 @@ router.patch('/systems/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 // DESTROY
-// DELETE /systems/5a7db6c74d55bc51bdf39793
-router.delete('/systems/:id', requireToken, (req, res, next) => {
-  System.findById(req.params.id)
+// DELETE /steps/5a7db6c74d55bc51bdf39793
+router.delete('/steps/:id', requireToken, (req, res, next) => {
+  Steps.findById(req.params.id)
     .then(handle404)
-    .then(system => {
-      // throw an error if current user doesn't own `system`
-      requireOwnership(req, system)
-      // delete the system ONLY IF the above didn't throw
-      system.deleteOne()
+    .then(step => {
+      // throw an error if current user doesn't own `step`
+      requireOwnership(req, step)
+      // delete the step ONLY IF the above didn't throw
+      step.deleteOne()
     })
     // send back 204 and no content if the deletion succeeded
     .then(() => res.sendStatus(204))

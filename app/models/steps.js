@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const systemSchema = new mongoose.Schema({
+const stepsSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
@@ -13,4 +13,4 @@ const systemSchema = new mongoose.Schema({
   timestamps: true
 })
 
-module.exports = systemSchema
+module.exports = stepsSchema

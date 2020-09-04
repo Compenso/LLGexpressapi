@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
-const systemSchema = require('./system')
+const stepsSchema = require('./steps')
 
 const paddockSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
   },
-  systems: [systemSchema],
+  systems: [stepsSchema],
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
